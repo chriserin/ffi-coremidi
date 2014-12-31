@@ -72,6 +72,17 @@ module CoreMIDI
       }
     end
 
+    def self.create_midi_destination(client, resource_id, name, callback)
+      destination_name = API::CF.CFStringCreateWithCString(nil, "Virtual Destination #{resource_id}: #{name}", 0)
+      endpoint_ptr = FFI::MemoryPointer.new(:pointer)
+      error = API.MIDIDestinationCreate(client, destination_name, callback, nil, endpoint_ptr)
+      endpoint = endpoint_ptr.read_pointer
+      {
+        :error => error,
+        :endpoint => endpoint
+      }
+    end
+
     def self.create_midi_input_port(client, resource_id, name, callback)
       port_name = API::CF.CFStringCreateWithCString(nil, "Port #{resource_id}: #{name}", 0)
       handle_ptr = FFI::MemoryPointer.new(:pointer)
@@ -178,8 +189,12 @@ module CoreMIDI
 
     # MIDIDeviceRef MIDIGetDevice(ItemCount deviceIndex0);
     attach_function :MIDIGetDevice, [:ItemCount], :MIDIDeviceRef
-    
-    # extern OSStatus MIDIInputPortCreate( MIDIClientRef client, CFStringRef portName, 
+
+    # extern OSStatus MIDIDestinationCreate( MIDIClientRef client, CFStringRef portName,
+    #                                      MIDIReadProc readProc, void * refCon, MIDIEndpointRef * outPort );
+    attach_function :MIDIDestinationCreate, [:MIDIClientRef, :CFStringRef, :MIDIReadProc, :pointer, :MIDIEndpointRef], :OSStatus
+
+    # extern OSStatus MIDIInputPortCreate( MIDIClientRef client, CFStringRef portName,
     #                                      MIDIReadProc readProc, void * refCon, MIDIPortRef * outPort );
     attach_function :MIDIInputPortCreate, [:MIDIClientRef, :CFStringRef, :MIDIReadProc, :pointer, :MIDIPortRef], :OSStatus
 
