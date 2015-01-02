@@ -30,7 +30,7 @@ module CoreMIDI
     end
     alias_method :read, :gets
 
-    # Same as Source#gets except that it returns message data as string of hex 
+    # Same as Source#gets except that it returns message data as string of hex
     # digits as such:
     #   [
     #     { :data => "904060", :timestamp => 904 },
@@ -150,7 +150,6 @@ module CoreMIDI
     def get_event_callback
       Proc.new do |new_packets, refCon_ptr, connRefCon_ptr|
         begin
-          # p "packets received: #{new_packets[:numPackets]}"
           timestamp = Time.now.to_f
           messages = get_messages(new_packets)
           messages.each { |message| enqueue_message(message, timestamp) }
@@ -170,17 +169,7 @@ module CoreMIDI
       messages = []
       messages << data.slice!(0, first[:length])
       (count - 1).times do |i|
-        length_index = find_next_length_index(data)
-        message_length = data[length_index]
-        unless message_length.nil?
-          packet_start_index = length_index + 2
-          packet_end_index = packet_start_index + message_length
-          if data.length >= packet_end_index + 1
-            packet = data.slice!(0..packet_end_index)
-            message = packet.slice(packet_start_index, message_length)
-            messages << message
-          end
-        end
+        messages << data.slice!(0, 13)[-3..-1]
       end
       messages
     end
