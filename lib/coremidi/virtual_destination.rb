@@ -15,5 +15,9 @@ module CoreMIDI
       raise "MIDIDestinationCreate returned error code #{endpoint[:error]}" unless endpoint[:error].zero?
       true
     end
+
+    def flush
+      error = API.MIDIFlushOutput(@handle)
+    end
   end
 end

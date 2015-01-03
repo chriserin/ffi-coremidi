@@ -225,8 +225,10 @@ module CoreMIDI
     #OSStatus MIDISendSysex(MIDISysexSendRequest *request);
     attach_function :MIDISendSysex, [:pointer], :int
 
-    # extern MIDIPacket * MIDIPacketListAdd( MIDIPacketList * pktlist, ByteCount listSize, 
-    #                                        MIDIPacket * curPacket, MIDITimeStamp time, 
+    attach_function :MIDIFlushOutput, [:MIDIEndpointRef], :OSStatus
+
+    # extern MIDIPacket * MIDIPacketListAdd( MIDIPacketList * pktlist, ByteCount listSize,
+    #                                        MIDIPacket * curPacket, MIDITimeStamp time,
     #                                        ByteCount nData, const Byte * data)
     if X86_64
       attach_function :MIDIPacketListAdd, [:pointer, :int, :pointer, :int, :int, :pointer], :pointer
