@@ -73,7 +73,7 @@ module CoreMIDI
     end
 
     def self.create_midi_destination(client, resource_id, name, callback)
-      destination_name = API::CF.CFStringCreateWithCString(nil, "Virtual Destination #{resource_id}: #{name}", 0)
+      destination_name = API::CF.CFStringCreateWithCString(nil, name, 0)
       endpoint_ptr = FFI::MemoryPointer.new(:pointer)
       error = API.MIDIDestinationCreate(client, destination_name, callback, nil, endpoint_ptr)
       endpoint = endpoint_ptr.read_pointer
